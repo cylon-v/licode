@@ -44,11 +44,11 @@ check_proxy(){
 }
 
 install_apt_deps(){
-  sudo apt-get install python-software-properties
-  sudo apt-get install software-properties-common
+  sudo apt-get -y install python-software-properties
+  sudo apt-get -y install software-properties-common
   sudo add-apt-repository ppa:chris-lea/node.js
-  sudo apt-get update
-  sudo apt-get install git make gcc g++ libssl-dev cmake libglib2.0-dev pkg-config nodejs libboost-regex-dev libboost-thread-dev libboost-system-dev liblog4cxx10-dev rabbitmq-server mongodb openjdk-6-jre curl libboost-test-dev
+  sudo apt-get -y update
+  sudo apt-get -y install git make gcc g++ libssl-dev cmake libglib2.0-dev pkg-config nodejs libboost-regex-dev libboost-thread-dev libboost-system-dev liblog4cxx10-dev rabbitmq-server mongodb openjdk-6-jre curl libboost-test-dev
   sudo npm install -g node-gyp
   sudo chown -R `whoami` ~/.npm ~/tmp/
 }
@@ -154,37 +154,13 @@ cleanup(){
   fi
 }
 
-parse_arguments $*
-
-
 mkdir -p $PREFIX_DIR
 
-pause "Installing deps via apt-get... [press Enter]"
 install_apt_deps
-
-check_proxy
-
-pause "Installing openssl library...  [press Enter]"
 install_openssl
-
-pause "Installing libnice library...  [press Enter]"
 install_libnice
-
-pause "Installing libsrtp library...  [press Enter]"
 install_libsrtp
-
-pause "Installing opus library...  [press Enter]"
 install_opus
+install_mediadeps
+cleanup
 
-if [ "$ENABLE_GPL" = "true" ]; then
-  pause "GPL libraries enabled"
-  install_mediadeps
-else
-  pause "No GPL libraries enabled, this disables h264 transcoding, to enable gpl please use the --enable-gpl option"
-  install_mediadeps_nogpl
-fi
-
-if [ "$CLEANUP" = "true" ]; then
-  echo "Cleaning up..."
-  cleanup
-fi
